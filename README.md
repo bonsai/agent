@@ -2,123 +2,202 @@
 
 ## Definition
 
-An **Agent** is an actor that observes a State, selects or performs an Action, and causes a State Transition toward a Goal.
+An **Agent** is an operational entity that arrives in an environment, senses it, acts upon it, and improves the environment.
+
+> **Agent = 環境に降り立ち、感知し、働きかけ、環境を改善する稼働体**
+
+An Agent does not merely execute a predefined task. It exists in an environment, senses the current state, interprets what it senses, decides what to do, acts through available interfaces, and changes the environment.
 
 ```text
-Goal
-  ↓
-State
-  ↓
-Agent
-  ↓
+Environment
+    ↓
+  Sensing
+    ↓
+Observation
+    ↓
+Cognition
+    ↓
+Decision
+    ↓
 Action
-  ↓
-State'
-  ↓
-Done?
+    ↓
+Environment Change
+    ↓
+Improved / Updated Environment
+    ↺
 ```
 
-The Agent is not the Goal, and it is not the Workflow itself.
+## Type and Implementation
 
-- **Goal** — defines the desired completion state.
-- **State** — describes the current state, including uncertainty and what is known or unknown.
-- **Agent** — decides what to do next based on State and Goal.
-- **Action** — changes or observes the world.
-- **Workflow** — defines how Actions may be composed or repeated.
-- **Evidence** — records why a State transition can be considered valid.
+**Type is a concept. JSON and YAML are formats used to describe and implement that concept.**
+
+```text
+Type
+  ↓
+Concept
+  ↓
+Type Definition
+  ↓
+JSON / YAML
+  ↓
+Implementation / Validation
+```
+
+Therefore:
+
+- **Type** — defines what something is as a concept.
+- **Type Definition** — formalizes that concept.
+- **JSON / YAML** — represent the definition in machine-readable form.
+- **Agent** — the concept of an environment-operating entity.
+- **Running Agent** — an implementation/instance of that concept.
+
+The canonical type system is maintained in [`bonsai/TYPE`](https://github.com/bonsai/TYPE).
 
 ## Core Principle
 
-> **Agent = State → Decision → Action → State**
-
-An Agent continuously reduces the gap between the current State and the Goal, but does not assume that every gap can or should be eliminated in advance.
-
 ```text
-Current State
-   │
-   ├─ known
-   ├─ unknown
-   └─ uncertain
+Agent × Environment
+        ↓
+     Sensing
+        ↓
+    Cognition
         ↓
      Decision
         ↓
       Action
         ↓
-   New State
+Environment Change
         ↓
-  Goal satisfied?
-    ├─ yes → Done
-    └─ no  → continue
+  Environment Update
+        ↺
 ```
 
-## Agent and ambiguity
+The environment may be physical, digital, social, organizational, or computational.
 
-Ambiguity belongs primarily to **State**. An Agent does not merely "execute a task"; it uses the current State to determine what remains unclear and chooses an appropriate next action.
+## Agent, Goal, State, Action
+
+- **Goal** — defines a desired state or direction of change.
+- **Environment** — the world in which the Agent operates.
+- **State** — describes the current condition of the environment and what is known, unknown, or uncertain.
+- **Agent** — senses the environment, decides what to do, and operates within it.
+- **Action** — changes or observes the environment.
+- **Workflow** — defines how Actions may be composed or repeated.
+- **Evidence** — records what supports an observed state or transition.
 
 ```text
-Vague State
-    ↓
-observe / clarify / test / research / act
-    ↓
-more explicit State
-    ↓
-repeat
-    ↓
-Goal State
-```
-
-Therefore an Agent may perform actions whose purpose is not immediately to complete the Goal, but to make the State more certain.
-
-## Minimal model
-
-```yaml
-agent:
-  observes: state
-  reasons_from:
-    - goal
-    - state
-    - constraints
-  selects: action
-  produces: state_transition
-  requires_evidence: true
-```
-
-## Decision loop
-
-```text
-while not goal.done(state):
-    state = observe(state)
-    decision = decide(goal, state, constraints)
-    action = select(decision)
-    result = execute(action)
-    state = update(state, result)
-    evidence = record(result)
-```
-
-The loop stops when the **Goal's completion state is satisfied**, not merely when an Action has been executed.
-
-## Relationship to solve
-
-`solve` is the process that transforms an ambiguous request into an actionable Goal and a sequence of State transitions.
-
-```text
-Request
+Goal
   ↓
-Solve
-  ↓
-Intent / Goal
-  ↓
-State
+Environment / State
   ↓
 Agent
   ↓
+Decision
+  ↓
 Action
   ↓
-State'
+Environment / State'
   ↓
-Evidence
-  ↓
-Done
+Improvement / Update
+  ↺
 ```
 
-The Agent is therefore the **decision-and-action actor inside the solving loop**.
+## Agent and Interface
+
+An Agent interacts with its environment through **Interfaces**.
+
+```text
+Agent
+  ↓
+Interface
+  ↓
+Environment
+```
+
+Interfaces can be physical or digital:
+
+```text
+Eye       ↔ Light / Air
+Ear       ↔ Sound / Air
+Voice     ↔ Air
+Keyboard  ↔ Computer
+API       ↔ Software
+Agent     ↔ Agent
+```
+
+Therefore an Agent's operation depends on what it can **sense**, what it can **understand**, and what it can **change** through its available interfaces and actions.
+
+## Relation to TYPE
+
+- **TYPE** — defines what an Agent is as a Type.
+- **Agent** — defines the operational concept and environment loop.
+- **Action** — defines what the Agent does.
+- **Interface** — defines how different Types interact.
+- **xX** — defines the experience produced through Subject × World interaction.
+
+```text
+TYPE
+  ↓
+Agent Type
+  ↓
+Agent Instance
+  ↓
+Environment
+  ↓
+Sensing
+  ↓
+Cognition
+  ↓
+Decision
+  ↓
+Action
+  ↓
+Environment Change
+  ↓
+xX / Experience Update
+```
+
+See:
+
+- [`bonsai/TYPE`](https://github.com/bonsai/TYPE)
+- [`bonsai/TYPE/agent.md`](https://github.com/bonsai/TYPE/blob/main/agent.md)
+
+## Minimal JSON / YAML representation
+
+```yaml
+type: Agent
+definition: >
+  環境に降り立ち、感知し、働きかけ、環境を改善する稼働体
+environment:
+  - Environment
+sensing:
+  - Observation
+cognition:
+  - Reason
+  - Decide
+actions:
+  - Action
+output:
+  - StateChange
+  - EnvironmentImprovement
+```
+
+## Operational Loop
+
+```text
+arrive
+  ↓
+sense
+  ↓
+understand
+  ↓
+decide
+  ↓
+act
+  ↓
+improve
+  ↓
+sense again
+  ↺
+```
+
+> **Agent = an operational entity that arrives in an environment, senses it, acts upon it, and improves the environment.**
